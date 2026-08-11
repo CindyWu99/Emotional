@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-title" content="安靜一下" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="application-name" content="安靜一下" />
-  <meta name="description" content="一個低刺激、離線可用的個人平靜工具。" />
+  <meta name="description" content="一個低刺激、離線可用的個人平靜工具。V2" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="apple-touch-icon" href="./icons/icon-180.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
   <meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#171816" media="(prefers-color-scheme: dark)">
-  <title>安靜一下</title>
+  <title>安靜一下 · V2.1</title>
   <style>
     :root {
       --bg: #f4f3ef;
@@ -377,14 +377,23 @@
     .heart {
       margin-top:18px;
       border:0;
-      min-width:50px;
-      min-height:50px;
-      border-radius:50%;
-      background:var(--panel-strong);
+      min-width:48px;
+      min-height:48px;
+      padding:0;
+      background:transparent;
+      box-shadow:none;
       color:var(--text);
+      font-size:31px;
+      line-height:1;
       cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      transition:transform .18s var(--ease), opacity .18s var(--ease);
     }
-    .heart.saved { transform:scale(1.05); }
+    .heart:hover { transform:scale(1.06); }
+    .heart:active { transform:scale(.94); }
+    .heart.saved { transform:scale(1.08); }
 
     .form-group { margin-bottom:16px; }
     label {
@@ -481,7 +490,7 @@
           </button>
 
           <button class="main-card" data-go="nausea">
-            <strong>惡心的時候</strong>
+            <strong>我胃不舒服</strong>
             <span>幾個低負擔的舒緩提示</span>
           </button>
 
@@ -524,15 +533,17 @@
       <section class="page" id="nausea">
         <div class="section-head">
           <button class="back" data-go="home" aria-label="返回">‹</button>
-          <h2>惡心的時候</h2>
+          <h2>我胃不舒服</h2>
         </div>
         <div class="tips-grid">
-          <div class="soft-card"><h3>先別逼自己</h3><p>不需要立刻吃東西，也不需要要求自己馬上舒服起來。</p></div>
-          <div class="soft-card"><h3>讓身體有空間</h3><p>坐直一點或靠起來，鬆開腹部附近過緊的衣物。</p></div>
-          <div class="soft-card"><h3>少量就好</h3><p>如果喝水讓你舒服，可以小口喝；不需要一次喝很多。</p></div>
-          <div class="soft-card"><h3>離開刺激</h3><p>暫時避開強烈氣味、悶熱空氣或讓你更不舒服的環境。</p></div>
-          <div class="soft-card"><h3>把注意力放到外面</h3><p>看看窗外、桌上的物品、牆上的紋理，讓注意力離開身體一會兒。</p></div>
-          <div class="soft-card"><h3>空腹時</h3><p>如果空腹會更難受，可以按自己的情況嘗試少量、容易接受的食物。</p></div>
+          <div class="soft-card"><h3>先把身體放好</h3><p>坐著、靠著，或找到現在最不費力的姿勢。不需要強迫自己立刻舒服起來。</p></div>
+          <div class="soft-card"><h3>讓腹部有空間</h3><p>鬆開腰帶、褲腰或任何壓著腹部的位置，肩膀也可以稍微放鬆一點。</p></div>
+          <div class="soft-card"><h3>一小口就夠</h3><p>如果喝水讓你舒服，可以只喝一小口。現在不需要完成「一整杯」這件事。</p></div>
+          <div class="soft-card"><h3>先離開刺激</h3><p>如果可以，暫時避開很濃的食物氣味、悶熱空氣或讓胃更不舒服的環境。</p></div>
+          <div class="soft-card"><h3>不用一直檢查胃</h3><p>把視線放到窗外、桌面或房間裡的一件物品上，讓注意力暫時去別的地方。</p></div>
+          <div class="soft-card"><h3>現在不想吃也可以</h3><p>不需要因為「應該吃」而逼自己。如果空腹會更難受，可以按自己的情況試一點容易接受的食物。</p></div>
+          <div class="soft-card"><h3>先別預測下一頓</h3><p>現在胃不舒服，不代表你需要立刻決定晚一點能不能吃、會不會再難受。</p></div>
+          <div class="soft-card"><h3>把世界縮小一點</h3><p>先處理眼前這幾分鐘。其他安排、工作和吃飯計劃，可以等身體安靜一些再想。</p></div>
         </div>
         <p class="tiny-note">這些只是舒緩建議，不用來判斷症狀原因。如果出現明顯異常、劇烈疼痛、昏厥、呼吸困難或其他嚴重症狀，請及時尋求醫療幫助。</p>
       </section>
@@ -656,7 +667,66 @@
       '先把世界縮小到眼前這一分鐘。',
       '舒服一點點，也已經算數。',
       '你可以先靠著，什麼都不決定。',
-      '這一刻可以很小，小到只剩下一次呼氣。'
+      '這一刻可以很小，小到只剩下一次呼氣。',
+      '現在不需要證明自己能撐住。',
+      '你可以暫時不處理任何人的期待。',
+      '不用急著判斷這次會持續多久。',
+      '一個不舒服的時刻，不等於一整天。',
+      '現在可以先不搜索症狀。',
+      '不用一直確認心跳、呼吸或胃的感覺。',
+      '你不需要把注意力一直放在身體裡。',
+      '先看一看眼前的東西，其他的晚點再想。',
+      '沒有必要把現在的感覺放大到今晚或明天。',
+      '現在只需要待著，不需要表現得正常。',
+      '可以慢一點，也可以什麼都不完成。',
+      '你沒有義務在這一刻保持高效率。',
+      '先讓身體自己做一點調整。',
+      '不用催促這種感覺離開。',
+      '不舒服可以存在，你也可以同時坐在這裡。',
+      '你不需要和這個感覺辯論。',
+      '不用問自己「為什麼又這樣」。',
+      '先不分析原因，現在只照顧眼前這一刻。',
+      '胃不舒服的時候，不需要立刻決定下一頓吃什麼。',
+      '現在不想吃，不代表之後也不會想吃。',
+      '不用測試自己能不能吃下更多。',
+      '一小口、一小步，都可以停。',
+      '胃裡很不舒服的時候，世界可以先縮小一點。',
+      '不用判斷這陣胃不舒服還要多久。',
+      '先讓腹部有一點空間。',
+      '現在只需要找到一個比較不費力的姿勢。',
+      '你可以先離食物的味道遠一點。',
+      '如果不想喝水，也不用勉強。',
+      '如果想喝，一小口就夠。',
+      '不用把「吃完」當成現在的任務。',
+      '不用因為胃不舒服就提前擔心下一餐。',
+      '現在的感受會變化，不需要追著它確認。',
+      '讓注意力去看看房間裡其他東西。',
+      '可以先不量、不查、不比較。',
+      '不用反覆確認自己是不是更嚴重了。',
+      '現在的你不需要做任何重大決定。',
+      '先把今天切成很小的一段。',
+      '這幾分鐘只需要讓自己少一點負擔。',
+      '你可以先把手機放低一點，看看周圍。',
+      '可以允許自己暫時反應慢一點。',
+      '不用為現在的狀態找一個完美解釋。',
+      '身體有波動，不代表你做錯了什麼。',
+      '現在先不要求舒服，只要求少一點負擔。',
+      '你可以停在「還行」這裡，不需要追求完全沒感覺。',
+      '開始舒服一點後，也不用繼續測試自己。',
+      '已經緩下來一點，就讓它自然待著。',
+      '不需要確認「是不是完全好了」。',
+      '其他事情可以等你更有餘力的時候再處理。',
+      '你可以把今天的標準調低一點。',
+      '現在不是考試，也沒有完成度。',
+      '這個 App 也沒有要求你完成任何一步。',
+      '想跳過就跳過，想停就停。',
+      '你只是在經過一個不舒服的時刻。',
+      '先待在現在，不用提前活到下一個小時。',
+      '你可以把注意力放在腳下、椅子、牆面或窗外。',
+      '只要少想一件事，就已經是在減輕負擔。',
+      '不用急著把感覺變成一句結論。',
+      '此刻可以沒有答案。',
+      '你可以先讓自己安靜地存在一會兒。'
     ];
 
     let currentQuote = '';
@@ -718,16 +788,16 @@
       calmContent.innerHTML = `
         <div class="calm-stage">
           <h2>你現在不用解決任何事情。</h2>
-          <p>先讓這一分鐘過去。</p>
+          <p>先讓這一分鐘過去。跟著節奏就好，不需要刻意深呼吸。</p>
           <div class="breath-wrap"><div class="breath-orb"></div></div>
-          <div class="breath-label" id="breathLabel">跟著圓慢慢呼吸就好</div>
+          <div class="breath-label" id="breathLabel">準備一下…</div>
           <div class="action-row">
-            <button class="pill primary" id="startBreath">跟著呼吸</button>
-            <button class="pill" id="freeBreath">不想控制呼吸</button>
+            <button class="pill" id="freeBreath">不想跟著節奏</button>
             <button class="pill" id="skipBreath">跳過</button>
           </div>
         </div>`;
-      document.getElementById('startBreath').onclick = guidedBreath;
+      // V2: breathing guidance starts automatically.
+      setTimeout(guidedBreath, 250);
       document.getElementById('freeBreath').onclick = () => {
         clearInterval(breathTimer);
         document.getElementById('breathLabel').textContent = '那就正常呼吸。只需要看著圓慢慢移動。';
@@ -761,16 +831,39 @@
       }, 1000);
     }
 
-    const groundingSteps = [
-      '看看周圍，找一個你覺得舒服的顏色。',
-      '感覺一下，你的腳現在碰到了什麼？',
-      '聽聽附近最安靜的一個聲音。',
-      '找到一個不會讓你不舒服的東西，看它幾秒鐘。'
+    const groundingPool = [
+      '看看房間裡，找一個最方的東西。',
+      '把視線放遠一點，找找離你最遠的東西。',
+      '看看現在的光是從哪裡進來的。',
+      '找一個你認識很久的物品，看它幾秒鐘。',
+      '摸一下衣服或袖口，感覺一下布料。',
+      '感覺一下腳底現在碰到的是地板、鞋子，還是其他東西。',
+      '聽聽背景裡最輕的一個聲音。',
+      '找一個你覺得舒服或不刺眼的顏色。',
+      '看看附近有沒有圓形的東西。',
+      '找一個表面有紋理的東西，看一下它的細節。',
+      '注意一下房間裡最安靜的角落。',
+      '看看一件普通到平時不會注意的東西。',
+      '把手放在椅子、床或桌面上，感覺它是硬的還是軟的。',
+      '看看窗外，或者看向房間裡最遠的一面牆。',
+      '找一樣不需要你做任何事情的東西，只看著它。'
     ];
 
+    let groundingSteps = [];
     let groundingIndex = 0;
+
+    function buildGroundingSteps() {
+      const pool = [...groundingPool];
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      groundingSteps = pool.slice(0, 4);
+    }
+
     function grounding() {
       clearInterval(breathTimer);
+      buildGroundingSteps();
       groundingIndex = 0;
       renderGrounding();
     }
@@ -781,7 +874,7 @@
           <p style="margin-bottom:10px;">把注意力放到身體外面一會兒。</p>
           <h2>${done ? '已經夠了。' : groundingSteps[groundingIndex]}</h2>
           <div class="action-row">
-            <button class="pill primary" id="groundNext">${done ? '下一步' : '找到了'}</button>
+            <button class="pill primary" id="groundNext">${done ? '繼續待一會兒' : '看到了'}</button>
             ${done ? '' : '<button class="pill" id="groundSkip">跳過</button>'}
           </div>
         </div>`;
@@ -797,14 +890,14 @@
       calmContent.innerHTML = `
         <div class="calm-stage" style="align-items:stretch;">
           <div style="text-align:center;">
-            <h2>惡心的時候，不需要逼自己立刻舒服起來。</h2>
+            <h2>我胃不舒服，不需要逼自己立刻舒服起來。</h2>
             <p>選一張看就好，不需要全部做。</p>
           </div>
           <div class="tip-scroller">
             <div class="tip-card">找一個舒服的位置坐著或靠著。</div>
             <div class="tip-card">鬆開勒住腹部的衣物。</div>
-            <div class="tip-card">如果舒服，可以小口喝水。</div>
-            <div class="tip-card">不需要強迫自己吃東西。</div>
+            <div class="tip-card">如果舒服，可以只喝一小口水。</div>
+            <div class="tip-card">現在不想吃，也不需要強迫自己。</div>
             <div class="tip-card">把注意力放到身體外面的東西。</div>
             <div class="tip-card">讓肩膀稍微放鬆一點。</div>
           </div>
@@ -870,7 +963,7 @@
               <button id="againGround">身體 Grounding</button>
               <button data-go="minute">只待一分鐘</button>
               <button data-go="quote">看一句話</button>
-              <button data-go="nausea">看看惡心舒緩</button>
+              <button data-go="nausea">看看胃不舒服時的提示</button>
             </div>
           </div>`;
         document.getElementById('againGround').onclick = grounding;

@@ -1,26 +1,26 @@
-# 安靜一下 — iPhone PWA
+# 安靜一下 — V2.1 iPhone PWA
 
-## GitHub Pages 部署
-1. 在 GitHub 新建一個 repository，例如 `quiet-calm`.
-2. 把本 ZIP 解壓後的所有檔案上傳到 repository 根目錄。
-3. 打開 Repository → Settings → Pages。
-4. 在 Build and deployment 中選擇 `Deploy from a branch`。
-5. Branch 選 `main`，Folder 選 `/(root)`，保存。
-6. GitHub Pages 生成網址後，用 iPhone 的 Safari 打開。
+## V2 主要修改
+- 呼吸引導現在會自動開始；只有點擊「不想跟著節奏」才停止節奏提示。
+- 「惡心的時候」改為「我胃不舒服」。
+- Grounding 改成更生活化的觀察 / 觸覺 / 聲音任務，並且每次隨機抽取 4 個。
+- 大幅增加安慰話，包含一般焦慮、身體不適、胃部不舒服、停止反覆檢查、逐漸緩下來等情境。
+- Service Worker 更新為 V2，HTML 使用 network-first，方便你在 GitHub 分支持續測試新版，不容易被舊快取卡住。
 
-## 添加到 iPhone 主屏幕
-1. 一定要使用 Safari 打開 GitHub Pages 網址。
-2. 點底部「分享」按鈕。
-3. 選「加入主畫面 / Add to Home Screen」。
-4. 確認名稱後加入。
-5. 之後可像 App 一樣從主屏幕全屏打開。
+## 發到 GitHub 分支
+如果你的分支已經包含 V1，建議直接覆蓋：
+- `index.html`
+- `manifest.json`
+- `service-worker.js`
 
-## 離線
-首次正常打開一次網站後，service worker 會緩存主要檔案。
-之後即使暫時沒有網絡，主功能仍可使用。
+`icons/` 可以沿用 V1；本 ZIP 也完整保留了一份。
 
-## 文件
-- `index.html`：完整 App
-- `manifest.json`：PWA 設定
-- `service-worker.js`：離線緩存
-- `icons/`：iPhone / PWA 圖標
+提交後，如果是 GitHub Pages 的測試分支，要在 Pages 設定中把發布 Branch 切到對應分支。
+如果仍看到舊版，可把主屏幕 App 完全關閉後重新打開；V2 service worker 啟用後會清理舊的 `quiet-calm-v1` 快取。
+
+## 本地資料
+收藏、設定和「我的安全角落」仍沿用原本相同的 LocalStorage key，因此覆蓋 V1 後不會主動清除你已保存的內容。
+
+
+## V2.1
+- 收藏按鈕移除白色背景，只保留稍微放大的愛心圖示；透明點擊區仍保留約 48px，方便 iPhone 觸控。
