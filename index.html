@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="安靜一下" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="安靜一下" />
+  <meta name="description" content="一個低刺激、離線可用的個人平靜工具。" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./icons/icon-180.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
+  <meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#171816" media="(prefers-color-scheme: dark)">
+  <title>安靜一下</title>
+  <style>
+    :root {
+      --bg: #f4f3ef;
+      --panel: rgba(255,255,255,.72);
+      --panel-strong: rgba(255,255,255,.9);
+      --text: #222320;
+      --muted: #74766f;
+      --line: rgba(34,35,32,.09);
+      --accent: #8fa291;
+      --accent-2: #dfe6df;
+      --shadow: 0 14px 38px rgba(53,58,50,.08);
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --ease: cubic-bezier(.22,.8,.3,1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #171816;
+        --panel: rgba(39,41,37,.78);
+        --panel-strong: rgba(45,47,43,.94);
+        --text: #f2f2ee;
+        --muted: #a7aaa2;
+        --line: rgba(255,255,255,.08);
+        --accent: #9bad9d;
+        --accent-2: #303a32;
+        --shadow: 0 14px 38px rgba(0,0,0,.18);
+      }
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin:0; min-height:100%; background:var(--bg); color:var(--text); }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    button, input, textarea, select { font: inherit; }
+
+    .app {
+      min-height:100vh;
+      padding:
+        max(22px, env(safe-area-inset-top))
+        18px
+        max(24px, env(safe-area-inset-bottom));
+      display:flex;
+      justify-content:center;
+    }
+
+    .shell {
+      width:min(100%, 560px);
+      position:relative;
+    }
+
+    .topbar {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      min-height:54px;
+      margin-bottom:18px;
+    }
+
+    .brand {
+      font-size:15px;
+      color:var(--muted);
+      letter-spacing:.02em;
+    }
+
+    .icon-btn {
+      min-width:44px;
+      min-height:44px;
+      border:0;
+      border-radius:50%;
+      background:var(--panel);
+      color:var(--text);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      cursor:pointer;
+    }
+
+    .page { display:none; animation:fadeIn .45s var(--ease); }
+    .page.active { display:block; }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(5px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+
+    h1, h2, p { margin-top:0; }
+    .hero-title {
+      font-size:clamp(30px, 8vw, 42px);
+      line-height:1.1;
+      letter-spacing:-.035em;
+      margin:18px 0 10px;
+    }
+    .hero-sub {
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.6;
+      margin-bottom:26px;
+    }
+
+    .stack { display:grid; gap:12px; }
+
+    .main-card, .soft-card {
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:var(--radius-lg);
+      background:var(--panel);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .main-card {
+      min-height:84px;
+      padding:20px 22px;
+      text-align:left;
+      cursor:pointer;
+      color:var(--text);
+      transition:transform .2s var(--ease), background .2s;
+    }
+    .main-card:hover { transform:translateY(-1px); }
+    .main-card:active { transform:scale(.99); }
+    .main-card strong { display:block; font-size:19px; margin-bottom:5px; }
+    .main-card span { color:var(--muted); font-size:14px; line-height:1.45; }
+
+    .primary-card {
+      background:linear-gradient(180deg, color-mix(in srgb, var(--accent-2) 75%, var(--panel)), var(--panel));
+      min-height:110px;
+    }
+
+    .footer-links {
+      margin-top:20px;
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .text-btn {
+      border:0;
+      background:transparent;
+      color:var(--muted);
+      min-height:44px;
+      padding:0 12px;
+      cursor:pointer;
+    }
+
+    .section-head {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:22px;
+    }
+    .section-head h2 {
+      font-size:27px;
+      letter-spacing:-.03em;
+      margin:0;
+    }
+
+    .back {
+      border:0;
+      min-width:44px;
+      min-height:44px;
+      border-radius:50%;
+      background:var(--panel);
+      color:var(--text);
+      cursor:pointer;
+      box-shadow:var(--shadow);
+    }
+
+    .calm-stage {
+      min-height:66vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+    }
+
+    .calm-stage h2 {
+      font-size:clamp(28px,7vw,38px);
+      line-height:1.22;
+      letter-spacing:-.035em;
+      max-width:430px;
+      margin-bottom:14px;
+    }
+
+    .calm-stage p {
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.65;
+      max-width:420px;
+    }
+
+    .breath-wrap {
+      height:250px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:10px 0 20px;
+    }
+
+    .breath-orb {
+      width:150px;
+      height:150px;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.75), rgba(255,255,255,.2) 34%, transparent 35%),
+        color-mix(in srgb, var(--accent) 72%, transparent);
+      filter:blur(.15px);
+      box-shadow:0 20px 55px color-mix(in srgb, var(--accent) 20%, transparent);
+      animation:breathe 11s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%   { transform:scale(.82); opacity:.72; }
+      36%  { transform:scale(1.12); opacity:.98; }
+      45%  { transform:scale(1.12); opacity:.98; }
+      100% { transform:scale(.82); opacity:.72; }
+    }
+
+    .breath-label {
+      font-size:15px;
+      color:var(--muted);
+      min-height:24px;
+      margin-top:2px;
+    }
+
+    .action-row {
+      display:flex;
+      width:100%;
+      gap:10px;
+      margin-top:22px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+
+    .pill {
+      border:0;
+      border-radius:999px;
+      min-height:50px;
+      padding:0 20px;
+      cursor:pointer;
+      background:var(--panel-strong);
+      color:var(--text);
+      box-shadow:var(--shadow);
+    }
+    .pill.primary {
+      background:var(--text);
+      color:var(--bg);
+    }
+
+    .tip-scroller {
+      width:100%;
+      display:flex;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      gap:12px;
+      padding:5px 2px 12px;
+    }
+    .tip-card {
+      flex:0 0 86%;
+      min-height:180px;
+      scroll-snap-align:center;
+      padding:26px;
+      border-radius:var(--radius-xl);
+      background:var(--panel);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      line-height:1.45;
+      letter-spacing:-.02em;
+    }
+
+    .quote {
+      font-size:clamp(28px,7vw,40px);
+      line-height:1.32;
+      letter-spacing:-.035em;
+      max-width:450px;
+      margin:25px auto;
+    }
+
+    .minute-area {
+      min-height:72vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+    }
+
+    .float-shape {
+      width:180px;
+      height:180px;
+      border-radius:45% 55% 53% 47% / 48% 42% 58% 52%;
+      background:color-mix(in srgb, var(--accent) 55%, transparent);
+      filter:blur(1px);
+      animation:floaty 16s ease-in-out infinite alternate;
+      margin-bottom:42px;
+    }
+    @keyframes floaty {
+      from { transform:translate3d(-12px,8px,0) rotate(-5deg) scale(.94); }
+      to { transform:translate3d(12px,-8px,0) rotate(5deg) scale(1.05); }
+    }
+
+    .minute-text {
+      min-height:56px;
+      font-size:22px;
+      letter-spacing:-.02em;
+      transition:opacity .5s;
+    }
+
+    .progress {
+      width:100%;
+      height:4px;
+      background:var(--line);
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:22px;
+    }
+    .progress > div {
+      height:100%;
+      width:0%;
+      background:var(--accent);
+      transition:width 1s linear;
+    }
+
+    .tips-grid { display:grid; gap:12px; }
+    .soft-card { padding:20px; }
+    .soft-card h3 { margin:0 0 8px; font-size:18px; }
+    .soft-card p { margin:0; color:var(--muted); line-height:1.55; }
+
+    .tiny-note {
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+      margin:20px 4px 0;
+    }
+
+    .quote-card {
+      min-height:330px;
+      padding:28px;
+      border-radius:var(--radius-xl);
+      background:var(--panel);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      text-align:center;
+    }
+
+    .heart {
+      margin-top:18px;
+      border:0;
+      min-width:50px;
+      min-height:50px;
+      border-radius:50%;
+      background:var(--panel-strong);
+      color:var(--text);
+      cursor:pointer;
+    }
+    .heart.saved { transform:scale(1.05); }
+
+    .form-group { margin-bottom:16px; }
+    label {
+      display:block;
+      font-size:14px;
+      color:var(--muted);
+      margin:0 0 7px 4px;
+    }
+    textarea, select {
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:var(--radius-md);
+      background:var(--panel);
+      color:var(--text);
+      padding:15px 16px;
+      outline:none;
+    }
+    textarea { min-height:88px; resize:vertical; }
+
+    .saved-note {
+      font-size:13px;
+      color:var(--muted);
+      text-align:center;
+      min-height:20px;
+      margin-top:8px;
+    }
+
+    .choice-grid {
+      display:grid;
+      gap:10px;
+      width:100%;
+      max-width:430px;
+      margin-top:20px;
+    }
+
+    .choice-grid button {
+      min-height:58px;
+      border:1px solid var(--line);
+      border-radius:var(--radius-md);
+      background:var(--panel);
+      color:var(--text);
+      cursor:pointer;
+    }
+
+    .quiet .hero-sub,
+    .quiet .main-card span,
+    .quiet .brand { display:none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration:.001ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.001ms !important;
+        scroll-behavior:auto !important;
+      }
+    }
+
+    @media (max-width:420px) {
+      .app { padding-left:14px; padding-right:14px; }
+      .main-card { padding:18px; }
+      .tip-card { flex-basis:90%; }
+      .action-row { flex-direction:column; }
+      .pill { width:100%; }
+    }
+  
+    .standalone body { overscroll-behavior-y: none; }
+    @supports (-webkit-touch-callout: none) {
+      body { -webkit-user-select: none; user-select: none; }
+      textarea, input, select { -webkit-user-select: text; user-select: text; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <main class="shell" id="shell">
+      <div class="topbar">
+        <div class="brand">安靜一下</div>
+        <button class="icon-btn" id="quietToggle" aria-label="切換安靜模式">◌</button>
+      </div>
+
+      <section class="page active" id="home">
+        <h1 class="hero-title">現在需要什麼？</h1>
+        <p class="hero-sub">不用想太多，選一個現在最接近的。</p>
+
+        <div class="stack">
+          <button class="main-card primary-card" data-go="calm">
+            <strong>我現在很難受</strong>
+            <span>直接進入一個很短的平靜流程</span>
+          </button>
+
+          <button class="main-card" data-go="minute">
+            <strong>陪我一分鐘</strong>
+            <span>不用做什麼，只讓這一分鐘過去</span>
+          </button>
+
+          <button class="main-card" data-go="nausea">
+            <strong>惡心的時候</strong>
+            <span>幾個低負擔的舒緩提示</span>
+          </button>
+
+          <button class="main-card" data-go="quote">
+            <strong>給我一句話</strong>
+            <span>不講大道理，只給你一句短短的話</span>
+          </button>
+        </div>
+
+        <div class="footer-links">
+          <button class="text-btn" data-go="corner">我的安全角落</button>
+          <button class="text-btn" data-go="settings">設定</button>
+        </div>
+      </section>
+
+      <section class="page" id="calm">
+        <div class="section-head">
+          <button class="back" data-go="home" aria-label="返回">‹</button>
+          <h2>先待在這裡</h2>
+        </div>
+        <div id="calmContent"></div>
+      </section>
+
+      <section class="page" id="minute">
+        <div class="section-head">
+          <button class="back" data-go="home" aria-label="返回">‹</button>
+          <h2>陪你一分鐘</h2>
+        </div>
+        <div class="minute-area">
+          <div class="float-shape" aria-hidden="true"></div>
+          <div class="minute-text" id="minuteText">不用做什麼。</div>
+          <div class="progress"><div id="minuteProgress"></div></div>
+          <div class="action-row">
+            <button class="pill" id="restartMinute">重新開始</button>
+            <button class="pill primary" data-go="home">回到首頁</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="nausea">
+        <div class="section-head">
+          <button class="back" data-go="home" aria-label="返回">‹</button>
+          <h2>惡心的時候</h2>
+        </div>
+        <div class="tips-grid">
+          <div class="soft-card"><h3>先別逼自己</h3><p>不需要立刻吃東西，也不需要要求自己馬上舒服起來。</p></div>
+          <div class="soft-card"><h3>讓身體有空間</h3><p>坐直一點或靠起來，鬆開腹部附近過緊的衣物。</p></div>
+          <div class="soft-card"><h3>少量就好</h3><p>如果喝水讓你舒服，可以小口喝；不需要一次喝很多。</p></div>
+          <div class="soft-card"><h3>離開刺激</h3><p>暫時避開強烈氣味、悶熱空氣或讓你更不舒服的環境。</p></div>
+          <div class="soft-card"><h3>把注意力放到外面</h3><p>看看窗外、桌上的物品、牆上的紋理，讓注意力離開身體一會兒。</p></div>
+          <div class="soft-card"><h3>空腹時</h3><p>如果空腹會更難受，可以按自己的情況嘗試少量、容易接受的食物。</p></div>
+        </div>
+        <p class="tiny-note">這些只是舒緩建議，不用來判斷症狀原因。如果出現明顯異常、劇烈疼痛、昏厥、呼吸困難或其他嚴重症狀，請及時尋求醫療幫助。</p>
+      </section>
+
+      <section class="page" id="quote">
+        <div class="section-head">
+          <button class="back" data-go="home" aria-label="返回">‹</button>
+          <h2>一句話</h2>
+        </div>
+        <div class="quote-card">
+          <div class="quote" id="quoteText"></div>
+          <button class="heart" id="saveQuote" aria-label="收藏這句話">♡</button>
+        </div>
+        <div class="action-row">
+          <button class="pill primary" id="nextQuote">換一句</button>
+          <button class="pill" id="showSaved">看看收藏</button>
+        </div>
+        <div id="savedQuotes" class="stack" style="margin-top:16px;"></div>
+      </section>
+
+      <section class="page" id="corner">
+        <div class="section-head">
+          <button class="back" data-go="home" aria-label="返回">‹</button>
+          <h2>我的安全角落</h2>
+        </div>
+
+        <div class="form-group">
+          <label for="place">我覺得舒服的地方</label>
+          <textarea id="place" placeholder="例如：沙發、床邊、窗邊"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="sound">我喜歡聽的聲音</label>
+          <textarea id="sound" placeholder="例如：雨聲、風扇聲、安靜的音樂"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="person">讓我安心的人</label>
+          <textarea id="person" placeholder="例如：可以發消息的人"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="food">通常能接受的食物 / 飲料</label>
+          <textarea id="food" placeholder="例如：溫水、餅乾、香蕉"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="distraction">讓我分散注意力的事情</label>
+          <textarea id="distraction" placeholder="例如：看做飯視頻、收拾桌面"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="reminder">我想提醒自己的話</label>
+          <textarea id="reminder" placeholder="寫一句你自己願意相信的話"></textarea>
+        </div>
+        <button class="pill primary" id="saveCorner">保存到這台裝置</button>
+        <div class="saved-note" id="cornerStatus"></div>
+      </section>
+
+      <section class="page" id="settings">
+        <div class="section-head">
+          <button class="back" data-go="home" aria-label="返回">‹</button>
+          <h2>設定</h2>
+        </div>
+        <div class="form-group">
+          <label for="fontSize">字體大小</label>
+          <select id="fontSize">
+            <option value="small">小</option>
+            <option value="default" selected>預設</option>
+            <option value="large">大</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="motion">動畫</label>
+          <select id="motion">
+            <option value="normal">正常</option>
+            <option value="low">很弱</option>
+            <option value="off">關閉</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="breath">呼吸節奏</label>
+          <select id="breath">
+            <option value="4-1-6">吸 4 秒 / 停 1 秒 / 呼 6 秒</option>
+            <option value="3-0-5">吸 3 秒 / 不停 / 呼 5 秒</option>
+            <option value="free">不提示節奏</option>
+          </select>
+        </div>
+        <button class="pill primary" id="saveSettings">保存設定</button>
+        <div class="saved-note" id="settingsStatus"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const pages = [...document.querySelectorAll('.page')];
+    const shell = document.getElementById('shell');
+
+    function go(id) {
+      pages.forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(id);
+      if (target) target.classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+      if (id === 'calm') startCalm();
+      if (id === 'minute') startMinute();
+      if (id === 'quote') showQuote();
+    }
+
+    document.addEventListener('click', e => {
+      const el = e.target.closest('[data-go]');
+      if (el) go(el.dataset.go);
+    });
+
+    const quotes = [
+      '你不需要現在就變好。',
+      '現在只處理這一分鐘。',
+      '難受，不代表接下來都會這樣。',
+      '你可以什麼都不做，只坐在這裡。',
+      '身體現在有點吵，但你不用跟它爭論。',
+      '不用檢查自己有沒有好一點。',
+      '等這一陣慢慢過去就好。',
+      '現在沒有需要你立刻解決的事情。',
+      '不用逼自己勇敢。',
+      '你已經來到這裡了，其他事情可以晚一點再處理。',
+      '不用把每一個感覺都弄明白。',
+      '先把世界縮小到眼前這一分鐘。',
+      '舒服一點點，也已經算數。',
+      '你可以先靠著，什麼都不決定。',
+      '這一刻可以很小，小到只剩下一次呼氣。'
+    ];
+
+    let currentQuote = '';
+    function showQuote() {
+      let next = quotes[Math.floor(Math.random() * quotes.length)];
+      if (quotes.length > 1) {
+        while (next === currentQuote) next = quotes[Math.floor(Math.random() * quotes.length)];
+      }
+      currentQuote = next;
+      document.getElementById('quoteText').textContent = next;
+      updateHeart();
+    }
+
+    document.getElementById('nextQuote').addEventListener('click', showQuote);
+
+    function getSavedQuotes() {
+      return JSON.parse(localStorage.getItem('quiet_saved_quotes') || '[]');
+    }
+
+    function updateHeart() {
+      const saved = getSavedQuotes().includes(currentQuote);
+      const btn = document.getElementById('saveQuote');
+      btn.textContent = saved ? '♥' : '♡';
+      btn.classList.toggle('saved', saved);
+    }
+
+    document.getElementById('saveQuote').addEventListener('click', () => {
+      const saved = getSavedQuotes();
+      const idx = saved.indexOf(currentQuote);
+      if (idx >= 0) saved.splice(idx, 1);
+      else saved.unshift(currentQuote);
+      localStorage.setItem('quiet_saved_quotes', JSON.stringify(saved.slice(0, 30)));
+      updateHeart();
+    });
+
+    document.getElementById('showSaved').addEventListener('click', () => {
+      const box = document.getElementById('savedQuotes');
+      const saved = getSavedQuotes();
+      if (!saved.length) {
+        box.innerHTML = '<div class="soft-card"><p>暫時還沒有收藏。</p></div>';
+        return;
+      }
+      box.innerHTML = saved.map(q => `<div class="soft-card"><p>${escapeHtml(q)}</p></div>`).join('');
+    });
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    }
+
+    const calmContent = document.getElementById('calmContent');
+    let breathTimer = null;
+
+    function startCalm() {
+      clearInterval(breathTimer);
+      calmIntro();
+    }
+
+    function calmIntro() {
+      calmContent.innerHTML = `
+        <div class="calm-stage">
+          <h2>你現在不用解決任何事情。</h2>
+          <p>先讓這一分鐘過去。</p>
+          <div class="breath-wrap"><div class="breath-orb"></div></div>
+          <div class="breath-label" id="breathLabel">跟著圓慢慢呼吸就好</div>
+          <div class="action-row">
+            <button class="pill primary" id="startBreath">跟著呼吸</button>
+            <button class="pill" id="freeBreath">不想控制呼吸</button>
+            <button class="pill" id="skipBreath">跳過</button>
+          </div>
+        </div>`;
+      document.getElementById('startBreath').onclick = guidedBreath;
+      document.getElementById('freeBreath').onclick = () => {
+        clearInterval(breathTimer);
+        document.getElementById('breathLabel').textContent = '那就正常呼吸。只需要看著圓慢慢移動。';
+      };
+      document.getElementById('skipBreath').onclick = grounding;
+    }
+
+    function guidedBreath() {
+      const rhythm = (JSON.parse(localStorage.getItem('quiet_settings') || '{}').breath || '4-1-6');
+      const label = document.getElementById('breathLabel');
+      clearInterval(breathTimer);
+      if (rhythm === 'free') {
+        label.textContent = '不用數節奏，正常呼吸就好。';
+        return;
+      }
+      const vals = rhythm.split('-').map(Number);
+      const cycle = [
+        ['吸氣', vals[0]],
+        ...(vals[1] ? [['停一下', vals[1]]] : []),
+        ['慢慢呼氣', vals[2]]
+      ];
+      let i = 0, left = cycle[0][1];
+      label.textContent = `${cycle[0][0]} · ${left}`;
+      breathTimer = setInterval(() => {
+        left--;
+        if (left <= 0) {
+          i = (i + 1) % cycle.length;
+          left = cycle[i][1];
+        }
+        label.textContent = `${cycle[i][0]} · ${left}`;
+      }, 1000);
+    }
+
+    const groundingSteps = [
+      '看看周圍，找一個你覺得舒服的顏色。',
+      '感覺一下，你的腳現在碰到了什麼？',
+      '聽聽附近最安靜的一個聲音。',
+      '找到一個不會讓你不舒服的東西，看它幾秒鐘。'
+    ];
+
+    let groundingIndex = 0;
+    function grounding() {
+      clearInterval(breathTimer);
+      groundingIndex = 0;
+      renderGrounding();
+    }
+    function renderGrounding() {
+      const done = groundingIndex >= groundingSteps.length;
+      calmContent.innerHTML = `
+        <div class="calm-stage">
+          <p style="margin-bottom:10px;">把注意力放到身體外面一會兒。</p>
+          <h2>${done ? '已經夠了。' : groundingSteps[groundingIndex]}</h2>
+          <div class="action-row">
+            <button class="pill primary" id="groundNext">${done ? '下一步' : '找到了'}</button>
+            ${done ? '' : '<button class="pill" id="groundSkip">跳過</button>'}
+          </div>
+        </div>`;
+      document.getElementById('groundNext').onclick = () => {
+        if (done) nauseaStage();
+        else { groundingIndex++; renderGrounding(); }
+      };
+      const skip = document.getElementById('groundSkip');
+      if (skip) skip.onclick = () => { groundingIndex++; renderGrounding(); };
+    }
+
+    function nauseaStage() {
+      calmContent.innerHTML = `
+        <div class="calm-stage" style="align-items:stretch;">
+          <div style="text-align:center;">
+            <h2>惡心的時候，不需要逼自己立刻舒服起來。</h2>
+            <p>選一張看就好，不需要全部做。</p>
+          </div>
+          <div class="tip-scroller">
+            <div class="tip-card">找一個舒服的位置坐著或靠著。</div>
+            <div class="tip-card">鬆開勒住腹部的衣物。</div>
+            <div class="tip-card">如果舒服，可以小口喝水。</div>
+            <div class="tip-card">不需要強迫自己吃東西。</div>
+            <div class="tip-card">把注意力放到身體外面的東西。</div>
+            <div class="tip-card">讓肩膀稍微放鬆一點。</div>
+          </div>
+          <div class="action-row">
+            <button class="pill primary" id="comfortNext">下一步</button>
+          </div>
+        </div>`;
+      document.getElementById('comfortNext').onclick = comfortStage;
+    }
+
+    function comfortStage() {
+      const q = quotes[Math.floor(Math.random() * quotes.length)];
+      calmContent.innerHTML = `
+        <div class="calm-stage">
+          <p>現在只看這一句。</p>
+          <div class="quote">${escapeHtml(q)}</div>
+          <div class="action-row">
+            <button class="pill primary" id="checkIn">繼續</button>
+          </div>
+        </div>`;
+      document.getElementById('checkIn').onclick = checkIn;
+    }
+
+    function checkIn() {
+      calmContent.innerHTML = `
+        <div class="calm-stage">
+          <h2>現在感覺怎麼樣？</h2>
+          <div class="choice-grid">
+            <button data-feel="better">舒服一點</button>
+            <button data-feel="same">差不多</button>
+            <button data-feel="hard">還是很難受</button>
+          </div>
+        </div>`;
+      calmContent.querySelectorAll('[data-feel]').forEach(btn => {
+        btn.onclick = () => feelResult(btn.dataset.feel);
+      });
+    }
+
+    function feelResult(feel) {
+      if (feel === 'better') {
+        calmContent.innerHTML = `
+          <div class="calm-stage">
+            <h2>好，那就先停在這裡。</h2>
+            <p>不用繼續檢查自己。</p>
+            <div class="action-row"><button class="pill primary" data-go="home">回到首頁</button></div>
+          </div>`;
+      } else if (feel === 'same') {
+        calmContent.innerHTML = `
+          <div class="calm-stage">
+            <h2>那就再給自己一點空間。</h2>
+            <div class="choice-grid">
+              <button data-go="minute">再坐一分鐘</button>
+              <button data-go="quote">看一句話</button>
+              <button data-go="home">先回首頁</button>
+            </div>
+          </div>`;
+      } else {
+        calmContent.innerHTML = `
+          <div class="calm-stage">
+            <h2>沒關係，我們換一種方式。</h2>
+            <p>不用把剛才當成失敗。</p>
+            <div class="choice-grid">
+              <button id="againGround">身體 Grounding</button>
+              <button data-go="minute">只待一分鐘</button>
+              <button data-go="quote">看一句話</button>
+              <button data-go="nausea">看看惡心舒緩</button>
+            </div>
+          </div>`;
+        document.getElementById('againGround').onclick = grounding;
+      }
+    }
+
+    let minuteInterval = null;
+    function startMinute() {
+      clearInterval(minuteInterval);
+      const texts = [
+        '不用做什麼。',
+        '我還在這裡。',
+        '慢一點。',
+        '這一分鐘還沒有結束。',
+        '讓身體自己調整。',
+        '不用檢查感覺。'
+      ];
+      const textEl = document.getElementById('minuteText');
+      const bar = document.getElementById('minuteProgress');
+      let sec = 0;
+      let idx = 0;
+      textEl.textContent = texts[0];
+      bar.style.width = '0%';
+
+      minuteInterval = setInterval(() => {
+        sec++;
+        bar.style.width = Math.min(100, (sec / 60) * 100) + '%';
+        if (sec % 10 === 0 && sec < 60) {
+          idx = Math.min(texts.length - 1, idx + 1);
+          textEl.style.opacity = 0;
+          setTimeout(() => {
+            textEl.textContent = texts[idx];
+            textEl.style.opacity = 1;
+          }, 220);
+        }
+        if (sec >= 60) {
+          clearInterval(minuteInterval);
+          textEl.textContent = '一分鐘過去了。';
+        }
+      }, 1000);
+    }
+
+    document.getElementById('restartMinute').addEventListener('click', startMinute);
+
+    const cornerFields = ['place','sound','person','food','distraction','reminder'];
+    function loadCorner() {
+      const data = JSON.parse(localStorage.getItem('quiet_corner') || '{}');
+      cornerFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = data[id] || '';
+      });
+    }
+    loadCorner();
+
+    document.getElementById('saveCorner').addEventListener('click', () => {
+      const data = {};
+      cornerFields.forEach(id => data[id] = document.getElementById(id).value.trim());
+      localStorage.setItem('quiet_corner', JSON.stringify(data));
+      const status = document.getElementById('cornerStatus');
+      status.textContent = '已保存，只留在這台裝置。';
+      setTimeout(() => status.textContent = '', 2200);
+    });
+
+    function loadSettings() {
+      const data = JSON.parse(localStorage.getItem('quiet_settings') || '{}');
+      if (data.fontSize) document.getElementById('fontSize').value = data.fontSize;
+      if (data.motion) document.getElementById('motion').value = data.motion;
+      if (data.breath) document.getElementById('breath').value = data.breath;
+      applySettings(data);
+    }
+
+    function applySettings(data) {
+      document.documentElement.style.fontSize =
+        data.fontSize === 'large' ? '18px' :
+        data.fontSize === 'small' ? '15px' : '16px';
+
+      if (data.motion === 'off') {
+        document.documentElement.style.setProperty('--motion-scale', '0');
+        document.querySelectorAll('.breath-orb,.float-shape').forEach(el => el.style.animation = 'none');
+      } else if (data.motion === 'low') {
+        document.querySelectorAll('.breath-orb,.float-shape').forEach(el => el.style.animationDuration = '24s');
+      } else {
+        document.querySelectorAll('.breath-orb').forEach(el => el.style.animationDuration = '');
+        document.querySelectorAll('.float-shape').forEach(el => el.style.animationDuration = '');
+      }
+    }
+
+    document.getElementById('saveSettings').addEventListener('click', () => {
+      const data = {
+        fontSize: document.getElementById('fontSize').value,
+        motion: document.getElementById('motion').value,
+        breath: document.getElementById('breath').value
+      };
+      localStorage.setItem('quiet_settings', JSON.stringify(data));
+      applySettings(data);
+      const status = document.getElementById('settingsStatus');
+      status.textContent = '已保存。';
+      setTimeout(() => status.textContent = '', 1600);
+    });
+
+    loadSettings();
+
+    document.getElementById('quietToggle').addEventListener('click', () => {
+      shell.classList.toggle('quiet');
+      localStorage.setItem('quiet_mode', shell.classList.contains('quiet') ? '1' : '0');
+    });
+
+    if (localStorage.getItem('quiet_mode') === '1') shell.classList.add('quiet');
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+      });
+    }
+
+    // Helpful styling hook when launched from the iPhone home screen.
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      document.documentElement.classList.add('standalone');
+    }
+  </script>
+
+</body>
+</html>
