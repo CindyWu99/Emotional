@@ -1,11 +1,16 @@
-const CACHE_NAME = 'quiet-calm-v2';
+const CACHE_NAME = 'quiet-calm-test3';
+
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
   './icons/icon-180.png',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './audio/forest_birds.wav',
+  './audio/rain.wav',
+  './audio/fireplace.wav',
+  './audio/wind_trees.wav'
 ];
 
 self.addEventListener('install', event => {
@@ -33,8 +38,6 @@ self.addEventListener('fetch', event => {
 
   const req = event.request;
 
-  // For page navigation / HTML: network first, then offline cache.
-  // This makes V2/V3 branch deployments show up much more reliably.
   if (req.mode === 'navigate' || req.destination === 'document') {
     event.respondWith(
       fetch(req)
@@ -48,16 +51,17 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Static assets: cache first, update opportunistically.
   event.respondWith(
     caches.match(req).then(cached => {
-      const networkFetch = fetch(req).then(response => {
-        if (response && response.ok) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
-        }
-        return response;
-      }).catch(() => null);
+      const networkFetch = fetch(req)
+        .then(response => {
+          if (response && response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
+          }
+          return response;
+        })
+        .catch(() => null);
 
       return cached || networkFetch;
     })

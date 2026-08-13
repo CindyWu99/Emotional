@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-title" content="安靜一下" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="application-name" content="安靜一下" />
-  <meta name="description" content="一個低刺激、離線可用的個人平靜工具。V2" />
+  <meta name="description" content="安靜一下測試版3：加入注意力轉移、身體放鬆、視覺追蹤與離線環境聲。" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="apple-touch-icon" href="./icons/icon-180.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
   <meta name="theme-color" content="#f4f3ef" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#171816" media="(prefers-color-scheme: dark)">
-  <title>安靜一下 · V2.1</title>
+  <title>安靜一下 · 測試版3</title>
   <style>
     :root {
       --bg: #f4f3ef;
@@ -231,12 +231,12 @@
         color-mix(in srgb, var(--accent) 72%, transparent);
       filter:blur(.15px);
       box-shadow:0 20px 55px color-mix(in srgb, var(--accent) 20%, transparent);
-      animation:breathe 11s ease-in-out infinite;
+      animation:breathe 10s ease-in-out infinite;
     }
     @keyframes breathe {
       0%   { transform:scale(.82); opacity:.72; }
-      36%  { transform:scale(1.12); opacity:.98; }
-      45%  { transform:scale(1.12); opacity:.98; }
+      40%  { transform:scale(1.12); opacity:.98; }
+      40.5%  { transform:scale(1.12); opacity:.98; }
       100% { transform:scale(.82); opacity:.72; }
     }
 
@@ -464,6 +464,132 @@
       body { -webkit-user-select: none; user-select: none; }
       textarea, input, select { -webkit-user-select: text; user-select: text; }
     }
+
+    .task-card {
+      min-height:260px;
+      padding:30px 24px;
+      border-radius:var(--radius-xl);
+      background:var(--panel);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+    }
+    .task-card .task {
+      font-size:clamp(25px,6.5vw,34px);
+      line-height:1.42;
+      letter-spacing:-.03em;
+      max-width:430px;
+    }
+    .task-kicker {
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.5;
+      margin-bottom:15px;
+    }
+    .body-step {
+      min-height:58vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      text-align:center;
+    }
+    .body-step .step-text {
+      font-size:clamp(27px,7vw,38px);
+      line-height:1.38;
+      letter-spacing:-.035em;
+      max-width:440px;
+      margin:0 auto;
+    }
+    .tracker-stage {
+      min-height:62vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+    }
+    .tracker-lane {
+      width:min(100%,460px);
+      height:170px;
+      position:relative;
+      overflow:hidden;
+      margin:26px 0 18px;
+      border-radius:var(--radius-xl);
+      background:color-mix(in srgb, var(--panel) 85%, transparent);
+      border:1px solid var(--line);
+    }
+    .tracker-dot {
+      width:28px;
+      height:28px;
+      border-radius:50%;
+      background:var(--accent);
+      position:absolute;
+      top:50%;
+      left:18px;
+      transform:translateY(-50%);
+      box-shadow:0 10px 28px color-mix(in srgb, var(--accent) 32%, transparent);
+      animation:trackDot 8s ease-in-out infinite alternate;
+    }
+    @keyframes trackDot {
+      from { left:18px; top:57%; transform:translateY(-50%) scale(.94); }
+      45% { top:39%; }
+      to { left:calc(100% - 46px); top:53%; transform:translateY(-50%) scale(1.05); }
+    }
+    .sound-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-top:16px;
+    }
+    .sound-card {
+      min-height:132px;
+      border:1px solid var(--line);
+      border-radius:var(--radius-lg);
+      background:var(--panel);
+      color:var(--text);
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      padding:18px;
+      text-align:left;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      transition:transform .18s var(--ease), background .18s var(--ease);
+    }
+    .sound-card:active { transform:scale(.985); }
+    .sound-card strong { font-size:18px; }
+    .sound-card span { color:var(--muted); font-size:13px; line-height:1.45; }
+    .sound-card.playing {
+      outline:2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+      background:color-mix(in srgb, var(--accent-2) 68%, var(--panel));
+    }
+    .sound-icon {
+      font-size:25px;
+      line-height:1;
+      margin-bottom:18px;
+      color:var(--accent);
+    }
+    .sound-now {
+      min-height:24px;
+      margin-top:18px;
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .volume-wrap {
+      margin-top:18px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .volume-wrap input { width:100%; accent-color:var(--accent); }
+
   </style>
 </head>
 <body>
@@ -487,6 +613,26 @@
           <button class="main-card" data-go="minute">
             <strong>陪我一分鐘</strong>
             <span>不用做什麼，只讓這一分鐘過去</span>
+          </button>
+
+          <button class="main-card" data-go="distract">
+            <strong>讓我做點別的</strong>
+            <span>用很簡單的小任務，把注意力拉到外面</span>
+          </button>
+
+          <button class="main-card" data-go="release">
+            <strong>身體鬆一點</strong>
+            <span>一次只放鬆一個很小的地方</span>
+          </button>
+
+          <button class="main-card" data-go="tracker">
+            <strong>看著它走一會兒</strong>
+            <span>不用思考，只用眼睛慢慢跟著</span>
+          </button>
+
+          <button class="main-card" data-go="listen">
+            <strong>聽一會兒</strong>
+            <span>四種可離線循環播放的環境聲</span>
           </button>
 
           <button class="main-card" data-go="nausea">
@@ -527,6 +673,100 @@
             <button class="pill" id="restartMinute">重新開始</button>
             <button class="pill primary" data-go="home">回到首頁</button>
           </div>
+        </div>
+      </section>
+
+
+      <section class="page" id="distract">
+        <div class="section-head">
+          <button class="back" data-go="home" aria-label="返回">‹</button>
+          <h2>讓我做點別的</h2>
+        </div>
+        <div class="task-card">
+          <div class="task-kicker">不用做得很好，只要找一找。</div>
+          <div class="task" id="distractTask"></div>
+        </div>
+        <div class="action-row">
+          <button class="pill primary" id="taskDone">找到了</button>
+          <button class="pill" id="taskNext">換一個</button>
+        </div>
+      </section>
+
+      <section class="page" id="release">
+        <div class="section-head">
+          <button class="back" data-go="home" aria-label="返回">‹</button>
+          <h2>身體鬆一點</h2>
+        </div>
+        <div class="body-step">
+          <p class="task-kicker">不用掃描全身，只做眼前這一步。</p>
+          <div class="step-text" id="releaseText"></div>
+          <div class="action-row">
+            <button class="pill primary" id="releaseNext">下一個</button>
+            <button class="pill" data-go="home">夠了</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="tracker">
+        <div class="section-head">
+          <button class="back" data-go="home" aria-label="返回">‹</button>
+          <h2>看著它走一會兒</h2>
+        </div>
+        <div class="tracker-stage">
+          <p>不用控制呼吸，也不用想別的。<br>只用眼睛慢慢跟著這個點。</p>
+          <div class="tracker-lane" aria-label="緩慢移動的視覺追蹤點">
+            <div class="tracker-dot"></div>
+          </div>
+          <p class="tiny-note">如果看移動的東西讓你更暈或更不舒服，就直接退出。</p>
+          <div class="action-row">
+            <button class="pill primary" data-go="home">夠了</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="listen">
+        <div class="section-head">
+          <button class="back" data-go="home" aria-label="返回">‹</button>
+          <h2>聽一會兒</h2>
+        </div>
+        <p class="hero-sub">點一個聲音就會循環播放。聲音已經打包在 App 裡，可離線使用。</p>
+
+        <div class="sound-grid">
+          <button class="sound-card" data-sound="forest">
+            <div class="sound-icon">◌</div>
+            <strong>鳥叫森林</strong>
+            <span>林間底聲和輕柔鳥鳴</span>
+          </button>
+
+          <button class="sound-card" data-sound="rain">
+            <div class="sound-icon">⌁</div>
+            <strong>雨聲</strong>
+            <span>均勻、細小的雨滴聲</span>
+          </button>
+
+          <button class="sound-card" data-sound="fire">
+            <div class="sound-icon">◇</div>
+            <strong>木柴燃燒</strong>
+            <span>低沉火聲和偶爾的噼啪聲</span>
+          </button>
+
+          <button class="sound-card" data-sound="wind">
+            <div class="sound-icon">≈</div>
+            <strong>風吹樹林</strong>
+            <span>緩慢起伏的風和樹葉聲</span>
+          </button>
+        </div>
+
+        <div class="sound-now" id="soundNow">目前沒有播放</div>
+
+        <div class="volume-wrap">
+          <span>音量</span>
+          <input id="ambientVolume" type="range" min="0" max="1" value="0.34" step="0.01" aria-label="環境聲音量">
+        </div>
+
+        <div class="action-row">
+          <button class="pill" id="stopSound">停止播放</button>
+          <button class="pill primary" data-go="home">回到首頁</button>
         </div>
       </section>
 
@@ -622,7 +862,7 @@
         <div class="form-group">
           <label for="breath">呼吸節奏</label>
           <select id="breath">
-            <option value="4-1-6">吸 4 秒 / 停 1 秒 / 呼 6 秒</option>
+            <option value="4-0-6">吸 4 秒 / 呼 6 秒</option>
             <option value="3-0-5">吸 3 秒 / 不停 / 呼 5 秒</option>
             <option value="free">不提示節奏</option>
           </select>
@@ -642,9 +882,12 @@
       const target = document.getElementById(id);
       if (target) target.classList.add('active');
       window.scrollTo({top:0, behavior:'smooth'});
+      if (id !== 'listen') stopAmbient();
       if (id === 'calm') startCalm();
       if (id === 'minute') startMinute();
       if (id === 'quote') showQuote();
+      if (id === 'distract') showDistractTask();
+      if (id === 'release') startRelease();
     }
 
     document.addEventListener('click', e => {
@@ -806,28 +1049,34 @@
     }
 
     function guidedBreath() {
-      const rhythm = (JSON.parse(localStorage.getItem('quiet_settings') || '{}').breath || '4-1-6');
+      const settings = JSON.parse(localStorage.getItem('quiet_settings') || '{}');
+      const rhythm = settings.breath || '4-0-6';
       const label = document.getElementById('breathLabel');
       clearInterval(breathTimer);
+
       if (rhythm === 'free') {
         label.textContent = '不用數節奏，正常呼吸就好。';
         return;
       }
+
       const vals = rhythm.split('-').map(Number);
       const cycle = [
         ['吸氣', vals[0]],
         ...(vals[1] ? [['停一下', vals[1]]] : []),
         ['慢慢呼氣', vals[2]]
       ];
-      let i = 0, left = cycle[0][1];
-      label.textContent = `${cycle[0][0]} · ${left}`;
+
+      let i = 0;
+      let left = cycle[0][1];
+      label.textContent = cycle[0][0];
+
       breathTimer = setInterval(() => {
         left--;
         if (left <= 0) {
           i = (i + 1) % cycle.length;
           left = cycle[i][1];
+          label.textContent = cycle[i][0];
         }
-        label.textContent = `${cycle[i][0]} · ${left}`;
       }, 1000);
     }
 
@@ -1008,6 +1257,127 @@
 
     document.getElementById('restartMinute').addEventListener('click', startMinute);
 
+
+    // 測試版3：低負擔注意力轉移
+    const distractTasks = [
+      '找一個圓形的東西。',
+      '找兩個藍色或偏藍的東西。',
+      '看看房間裡離你最遠的是什麼。',
+      '找一個上面有文字的東西。',
+      '找一個摸起來比較軟的東西。',
+      '找一個你平時很少注意的小東西。',
+      '看看哪個東西最接近正方形。',
+      '找一樣表面有紋理的東西。',
+      '找一個比手機更大的東西。',
+      '找一個比手機更小的東西。',
+      '看看光現在落在哪個地方。',
+      '找一件你用了很久的東西。',
+      '找三條直線。',
+      '看看附近有沒有帶數字的東西。',
+      '找一件顏色最淺的東西。',
+      '找一件顏色最深的東西。',
+      '看看附近哪個東西最亮。',
+      '找一樣不需要你做任何事情的東西，只看它幾秒。'
+    ];
+
+    let lastDistract = -1;
+
+    function showDistractTask() {
+      let i = Math.floor(Math.random() * distractTasks.length);
+      while (distractTasks.length > 1 && i === lastDistract) {
+        i = Math.floor(Math.random() * distractTasks.length);
+      }
+      lastDistract = i;
+      document.getElementById('distractTask').textContent = distractTasks[i];
+    }
+
+    document.getElementById('taskDone').addEventListener('click', showDistractTask);
+    document.getElementById('taskNext').addEventListener('click', showDistractTask);
+
+    // 測試版3：身體鬆一點
+    const releaseSteps = [
+      '讓牙齒稍微分開，不用咬著。',
+      '讓舌頭不用一直頂著上顎。',
+      '肩膀可以往下掉一點點。',
+      '手指不用抓緊手機，鬆開一點。',
+      '眉頭可以鬆一點，不需要刻意撐著。',
+      '腹部不用刻意收緊，讓它自然一點。',
+      '腳趾不用用力，讓它們安靜地放著。',
+      '下巴不用抬著，也不用縮著，找個省力的位置。',
+      '手掌可以攤開一點，不用握住。',
+      '如果背部正在用力，讓椅子或床替你承擔一點。'
+    ];
+
+    let releaseIndex = 0;
+
+    function startRelease() {
+      releaseIndex = 0;
+      document.getElementById('releaseText').textContent = releaseSteps[releaseIndex];
+    }
+
+    document.getElementById('releaseNext').addEventListener('click', () => {
+      releaseIndex = (releaseIndex + 1) % releaseSteps.length;
+      document.getElementById('releaseText').textContent = releaseSteps[releaseIndex];
+    });
+
+    // 測試版3：完全離線的循環環境聲
+    const ambientSources = {
+      forest: { name:'鳥叫森林', src:'./audio/forest_birds.wav' },
+      rain:   { name:'雨聲', src:'./audio/rain.wav' },
+      fire:   { name:'木柴燃燒', src:'./audio/fireplace.wav' },
+      wind:   { name:'風吹樹林', src:'./audio/wind_trees.wav' }
+    };
+
+    let ambientAudio = null;
+    let ambientKey = null;
+
+    function stopAmbient() {
+      if (ambientAudio) {
+        ambientAudio.pause();
+        ambientAudio.currentTime = 0;
+      }
+      ambientAudio = null;
+      ambientKey = null;
+
+      document.querySelectorAll('.sound-card').forEach(card => card.classList.remove('playing'));
+      const now = document.getElementById('soundNow');
+      if (now) now.textContent = '目前沒有播放';
+    }
+
+    function playAmbient(key) {
+      if (ambientKey === key && ambientAudio) {
+        stopAmbient();
+        return;
+      }
+
+      stopAmbient();
+      const item = ambientSources[key];
+      ambientAudio = new Audio(item.src);
+      ambientAudio.loop = true;
+      ambientAudio.preload = 'auto';
+      ambientAudio.volume = Number(document.getElementById('ambientVolume').value || 0.34);
+      ambientKey = key;
+
+      ambientAudio.play().then(() => {
+        const card = document.querySelector(`.sound-card[data-sound="${key}"]`);
+        if (card) card.classList.add('playing');
+        document.getElementById('soundNow').textContent = `正在播放：${item.name} · 再點一次可停止`;
+      }).catch(() => {
+        document.getElementById('soundNow').textContent = '請再點一次聲音卡片開始播放';
+      });
+    }
+
+    document.querySelectorAll('.sound-card').forEach(card => {
+      card.addEventListener('click', () => playAmbient(card.dataset.sound));
+    });
+
+    document.getElementById('ambientVolume').addEventListener('input', e => {
+      if (ambientAudio) ambientAudio.volume = Number(e.target.value);
+    });
+
+    document.getElementById('stopSound').addEventListener('click', stopAmbient);
+
+
     const cornerFields = ['place','sound','person','food','distraction','reminder'];
     function loadCorner() {
       const data = JSON.parse(localStorage.getItem('quiet_corner') || '{}');
@@ -1029,6 +1399,13 @@
 
     function loadSettings() {
       const data = JSON.parse(localStorage.getItem('quiet_settings') || '{}');
+
+      // 測試版3：把舊版預設 4-1-6 遷移為 4-0-6。
+      if (!data.breath || data.breath === '4-1-6') {
+        data.breath = '4-0-6';
+        localStorage.setItem('quiet_settings', JSON.stringify(data));
+      }
+
       if (data.fontSize) document.getElementById('fontSize').value = data.fontSize;
       if (data.motion) document.getElementById('motion').value = data.motion;
       if (data.breath) document.getElementById('breath').value = data.breath;
@@ -1042,9 +1419,9 @@
 
       if (data.motion === 'off') {
         document.documentElement.style.setProperty('--motion-scale', '0');
-        document.querySelectorAll('.breath-orb,.float-shape').forEach(el => el.style.animation = 'none');
+        document.querySelectorAll('.breath-orb,.float-shape,.tracker-dot').forEach(el => el.style.animation = 'none');
       } else if (data.motion === 'low') {
-        document.querySelectorAll('.breath-orb,.float-shape').forEach(el => el.style.animationDuration = '24s');
+        document.querySelectorAll('.breath-orb,.float-shape,.tracker-dot').forEach(el => el.style.animationDuration = '24s');
       } else {
         document.querySelectorAll('.breath-orb').forEach(el => el.style.animationDuration = '');
         document.querySelectorAll('.float-shape').forEach(el => el.style.animationDuration = '');
